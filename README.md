@@ -1,4 +1,4 @@
-# OptiYield AI
+# Predictive-Maintenance-Inventory-Optimization
 
 Python-based machine learning and operations engine for predictive manufacturing defect analysis and smart inventory optimization. The framework predicts equipment failure risks from industrial sensor telemetry, applies dynamic safety stock allocation rules, computes optimal inventory reorder parameters, and exports scenario outputs to CSV.
 
