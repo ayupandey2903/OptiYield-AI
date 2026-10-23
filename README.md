@@ -17,41 +17,58 @@ The model represents industrial telemetry streams and an automated inventory opt
 7. Validates performance against target thresholds (ROC-AUC > 0.90).
 8. Exports detailed recommendations and inventory schedules to CSV.
 
-## Repository Structure
+---
+
+## 📊 Project Visualizations & Performance
+
+### 1. Model Performance (ROC Curve)
+Demonstrates predictive power with a high ROC-AUC score (0.9539), effectively separating healthy machine states from impending failures.
+![ROC Curve](plots/roc_curve.png)
+
+### 2. Feature Importance Analysis
+Highlights the key industrial sensors and telemetry metrics (such as tool wear and torque) that drive the XGBoost model's failure predictions.
+![Feature Importance](plots/feature_importance.png)
+
+### 3. Dynamic Inventory Safety Stock Scaling
+Bridges the gap between machine learning predictions and supply chain logistics by automatically scaling safety stock tiers based on real-time operational risk.
+![Inventory Risk Scaling](plots/inventory_risk_scaling.png)
+
+---
+
 ## Core Model Components
 
-`Preprocess`
+### `Preprocess`
 Models the raw sensor telemetry streams. It handles data transformations using:
-* Feature selection and unique ID removal
-* Numerical standard scaling (`StandardScaler`)
-* Categorical encoding for machine types
-* Interaction feature creation (e.g., thermal power metrics)
+- Feature selection and unique ID removal
+- Numerical standard scaling (`StandardScaler`)
+- Categorical encoding for machine types
+- Interaction feature creation (e.g., thermal power metrics)
 
 The output includes clean feature matrices ready for model training and evaluation.
 
-`TrainModel`
+### `TrainModel`
 Primary machine learning pipeline. It builds and cross-validates the prediction model:
-* Fits an `XGBoostClassifier` on failure labels
-* Evaluates cross-validation ROC-AUC scores
-* Computes feature importance rankings across telemetry sensors
+- Fits an `XGBoostClassifier` on failure labels
+- Evaluates cross-validation ROC-AUC scores
+- Computes feature importance rankings across telemetry sensors
 
-`OptimizeInventory`
+### `OptimizeInventory`
 Main orchestration class. Translates predicted failure risks into operational inventory decisions.
 
-`SafetyStockCalculator`
+### `SafetyStockCalculator`
 Handles dynamic safety stock scaling based on risk tiers:
-* **High Failure Risk (> 0.50):** Expands safety stock buffer by 2.5x
-* **Moderate Risk (0.20 – 0.50):** Expands safety stock buffer by 1.5x
-* **Low Risk (< 0.20):** Maintains base safety stock buffer
+- **High Failure Risk (> 0.50):** Expands safety stock buffer by 2.5x
+- **Moderate Risk (0.20 – 0.50):** Expands safety stock buffer by 1.5x
+- **Low Risk (< 0.20):** Maintains base safety stock buffer
 
 ## Key Assumptions
 
-* Sensor readings arrive in sequential time-series intervals.
-* Failure probability directly correlates with component replacement urgency.
-* Base safety stock is set to a default baseline of 50 units.
-* Model validation passes when test set ROC-AUC meets or exceeds `0.95`.
+- Sensor readings arrive in sequential time-series intervals.
+- Failure probability directly correlates with component replacement urgency.
+- Base safety stock is set to a default baseline of 50 units.
+- Model validation passes when test set ROC-AUC meets or exceeds `0.95`.
 
-## Installation
+## Installation & Setup
 
 Create a virtual environment, install the dependencies, and run the pipeline.
 
@@ -60,21 +77,3 @@ Create a virtual environment, install the dependencies, and run the pipeline.
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-
-
-Validation
-The model includes two validation layers:
-
-Model Performance Validation: Checks whether test set ROC-AUC score exceeds target threshold (0.9539 achieved) and flags results as PASS or CHECK.
-
-Inventory Tie-Out Validation: Verifies that calculated safety stock levels cover expected failure risk windows without exceeding maximum storage capacity limits.
-
-Interpretation
-Higher Failure Probabilities (>0.50): Instantly trigger higher safety stock buffers to prevent unplanned downtime.
-
-Lower Probabilities (<0.20): Maintain baseline inventory levels to minimize holding costs.
-
-Feature Importance: Tool wear and thermal readings typically serve as the strongest early-warning indicators of failure.
-
-Disclaimer
-This project is for educational and portfolio demonstration purposes only. It is not intended for direct commercial manufacturing execution without independent testing and domain validation.
